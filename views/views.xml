@@ -1,0 +1,63 @@
+<odoo>
+  <data>
+    <record id="seq_crm_referencia" model="ir.sequence">
+        <field name="name">CRM Referência</field>
+        <field name="code">crm.referencia</field>
+        <field name="prefix">CRM</field>
+        <field name="padding">3</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="implementation">standard</field>
+    </record>
+
+
+    <record id="crm_lead_view_form_inherit_js" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.js</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="replace">
+                <button name="action_concluir"
+                        string="Concluído"
+                        type="object"
+                        class="oe_highlight"/>
+            </xpath>
+
+            <xpath expr="//header/button[@name='195']" position="replace">
+                <!-- Pode deixar vazio ou nem colocar se só quiser remover -->
+            </xpath>
+            <xpath expr="//h1[field[@name='name']]" position="replace">
+                <h1>
+                    <field name="referencia" class="text-break" placeholder="CRM Referência"/>
+                </h1>
+                <field name="name"/>
+            </xpath>
+            <!-- Remover expected_revenue -->
+            <xpath expr="//field[@name='expected_revenue']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='probability']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']/ancestor::div[1]" position="after">
+                <field name="requisicao_externa"/>
+                <field name="data_entrada"/>
+                <field name="guia_remessa"/>
+                <field name="folha_obra"/>
+            </xpath>
+            <xpath expr="//field[@name='priority']" position="attributes">
+                <attribute name="widget">radio</attribute>
+                <attribute name="options">{'horizontal': true}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="tecnico_id"/>
+                <field name="tipo_processo"/>
+                <field name="tempo_total"/>
+            </xpath>
+
+        </field>
+    </record>
+  </data>
+</odoo>

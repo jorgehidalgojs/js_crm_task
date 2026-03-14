@@ -1,0 +1,11 @@
+<!--<odoo>-->
+<!--  <data noupdate="1">-->
+<!--    <record id="crm_stage_concluido" model="crm.stage">-->
+<!--        <field name="name">Concluído</field>-->
+<!--        <field name="sequence" eval="5"/>-->
+<!--        <field name="probability" eval="100"/>-->
+<!--        <field name="team_id" eval="None"/>   &lt;!&ndash; Usar None em vez de False &ndash;&gt;-->
+<!--        <field name="fold" eval="False"/>     &lt;!&ndash; Garante compatibilidade &ndash;&gt;-->
+<!--    </record>-->
+<!--  </data>-->
+<!--</odoo>-->
