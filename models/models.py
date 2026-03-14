@@ -48,9 +48,7 @@ class CrmLead(models.Model):
     def create(self, vals):
         if not vals.get('referencia'):
             vals['referencia'] = self.env['ir.sequence'].next_by_code('crm.referencia') or '/'
-
         vals['stage_enter_date'] = fields.Datetime.now()
-
         return super().create(vals)
 
 
@@ -60,27 +58,20 @@ class CrmLead(models.Model):
                 raise ValidationError(
                     "Preencha os campos 'Guia de Remessa' e 'Folha de Obra' antes de concluir."
                 )
-
         # marcar como ganho (Won)
         self.action_set_won()
 
     def write(self, vals):
+        for rec in self:
+            # se houver mudança de estágio
+            if 'stage_id' in vals and rec.stage_enter_date:
+                now = fields.Datetime.now()
+                delta = now - rec.stage_enter_date
+                hours = delta.total_seconds() / 3600
+                rec.tempo_total += hours  # acumula tempo em horas
+                rec.stage_enter_date = now  # atualiza o início do novo estágio
 
-        if 'stage_id' in vals:
-            for rec in self:
-
-                if rec.stage_enter_date:
-                    now = fields.Datetime.now()
-
-                    diff = now - rec.stage_enter_date
-
-                    hours = diff.total_seconds() / 3600
-
-                    rec.tempo_total += hours
-
-            vals['stage_enter_date'] = fields.Datetime.now()
-
-        return super(CrmLead, self).write(vals)
+        return super().write(vals)
 
 
 

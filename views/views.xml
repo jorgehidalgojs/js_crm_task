@@ -23,9 +23,8 @@
                         class="oe_highlight"/>
             </xpath>
 
-            <xpath expr="//header/button[@name='195']" position="replace">
-                <!-- Pode deixar vazio ou nem colocar se só quiser remover -->
-            </xpath>
+            <xpath expr="//header/button[2]" position="replace" optional="1"/>
+            <!-- Pode deixar vazio ou nem colocar se só quiser remover -->
             <xpath expr="//h1[field[@name='name']]" position="replace">
                 <h1>
                     <field name="referencia" class="text-break" placeholder="CRM Referência"/>
@@ -56,8 +55,20 @@
                 <field name="tipo_processo"/>
                 <field name="tempo_total"/>
             </xpath>
-
         </field>
     </record>
+      <record id="view_crm_lead_tree_inherit" model="ir.ui.view">
+            <field name="name">crm.lead.tree.inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+            <field name="arch" type="xml">
+                <!-- Adiciona os campos depois do nome -->
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="data_entrada"/>
+                    <field name="tecnico_id"/>
+                    <field name="tipo_processo"/>
+                </xpath>
+            </field>
+        </record>
   </data>
 </odoo>
