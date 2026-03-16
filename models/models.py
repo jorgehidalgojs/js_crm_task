@@ -37,26 +37,18 @@ class CrmLead(models.Model):
         if 'stage_id' in vals:
             now = fields.Datetime.now()
             for rec in self:
-                print(f"\n=== Lead: {rec.name} ===")
-                print(f"Stage atual: {rec.stage_id.name if rec.stage_id else 'N/A'}")
-                print(
-                    f"Stage nova (vals['stage_id']): {self.env['crm.stage'].browse(vals['stage_id']).name if vals.get('stage_id') else 'N/A'}")
-                print(f"Stage enter date: {rec.stage_enter_date}")
+
 
                 if rec.stage_enter_date:
                     delta = now - rec.stage_enter_date
                     total_seconds = delta.total_seconds()
                     hours = int(total_seconds // 3600)
                     minutes = int((total_seconds % 3600) // 60)
-                    print(f"Delta entre stages: {delta} ({minutes}h {minutes}min)")
-                    print(f"Delta entre stages: {delta} ({hours} minutos)")
-                    print(f"Tempo total antes: {rec.tempo_total} horas")
+
                     rec.tempo_total += hours
-                    print(f"Tempo total depois: {rec.tempo_total} horas")
 
                 # Atualiza o início do novo stage
                 rec.stage_enter_date = now
-                print(f"Stage enter date atualizado para: {rec.stage_enter_date}")
 
         return super().write(vals)
 
