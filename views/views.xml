@@ -16,8 +16,19 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
+<<<<<<< HEAD
         <!-- Primero remover el botón Lost que viene justo después de Won -->
         <xpath expr="//header/button[@name='action_set_won_rainbowman']/following-sibling::button[1]" position="replace"/>
+=======
+            <xpath expr="//span[@groups='!crm.group_use_recurring_revenues']" position="replace"/>
+            <xpath expr="//span[@groups='crm.group_use_recurring_revenues']" position="replace"/>
+            <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="replace">
+                <button name="action_concluir"
+                        string="Concluído"
+                        type="object"
+                        class="oe_highlight"/>
+            </xpath>
+>>>>>>> 498095e (ultimos ajuste de calculo de tempo por hora e alteracao da view)
 
         <!-- Después reemplazar Won por tu botón -->
         <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="replace">
@@ -37,24 +48,38 @@
             <xpath expr="//field[@name='expected_revenue']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+             <xpath expr="//label[@for='probability']" position="replace"/>
+            <xpath expr="//div[@id='probability']" position="replace"/>
+            <xpath expr="//small[field[@name='automated_probability']]" position="replace"/>
 
-            <xpath expr="//field[@name='probability']" position="attributes">
-                <attribute name="invisible">1</attribute>
+            <xpath expr="//sheet" position="inside">
+                <field name="probability" invisible="1"/>
+                <field name="is_automated_probability" invisible="1"/>
+
             </xpath>
+
             <xpath expr="//field[@name='phone']/ancestor::div[1]" position="after">
                 <field name="requisicao_externa"/>
+                <field name="tipo_processo"/>
                 <field name="data_entrada"/>
-                <field name="guia_remessa"/>
-                <field name="folha_obra"/>
+
             </xpath>
-            <xpath expr="//field[@name='priority']" position="attributes">
-                <attribute name="widget">radio</attribute>
-                <attribute name="options">{'horizontal': true}</attribute>
+            <xpath expr="//div[@class='o_lead_opportunity_form_inline_fields']" position="replace">
+                <div class="o_lead_opportunity_form_inline_fields">
+                    <field name="date_deadline" nolabel="1" class="oe_inline"/>
+                </div>
             </xpath>
 
+            <xpath expr="//field[@name='user_id']" position="before">
+                <field name="priority"
+                       string="Prioridade"
+                       widget="radio"
+                       options="{'horizontal': true}"/>
+            </xpath>
             <xpath expr="//field[@name='tag_ids']" position="after">
                 <field name="tecnico_id"/>
-                <field name="tipo_processo"/>
+                <field name="guia_remessa"/>
+                <field name="folha_obra"/>
                 <field name="tempo_total"/>
             </xpath>
         </field>

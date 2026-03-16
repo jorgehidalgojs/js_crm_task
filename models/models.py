@@ -5,19 +5,9 @@ class CrmLead(models.Model):
     _inherit = "crm.lead"
 
     referencia = fields.Char(string="Referência", readonly=True, copy=False)
-
-    data_entrada = fields.Datetime(
-        string="Data de Entrada",
-        default=fields.Datetime.now,
-        readonly=True
-    )
-    requisicao_externa = fields.Char(
-        string="Requisição Externa"
-    )
-    tecnico_id = fields.Many2one(
-        'hr.employee',
-        string="Técnico Designado"
-    )
+    data_entrada = fields.Datetime(string="Data de Entrada", default=fields.Datetime.now)
+    requisicao_externa = fields.Char(string="Requisição Externa")
+    tecnico_id = fields.Many2one('hr.employee', string="Técnico Designado")
     tipo_processo = fields.Selection([
         ('fornecimento', 'Fornecimento'),
         ('assistencia', 'Assistência Técnica'),
@@ -31,26 +21,44 @@ class CrmLead(models.Model):
     )
     guia_remessa = fields.Char(string="Guia de Remessa")
     folha_obra = fields.Char(string="Folha de Obra")
-    stage_enter_date = fields.Datetime(
-        string="Entrada no Estágio"
-    )
-
-    @api.depends('create_date', 'date_closed')
-    def _compute_tempo_total(self):
-        for rec in self:
-            if rec.date_closed:
-                delta = rec.date_closed - rec.create_date
-                rec.tempo_total = delta.days
-            else:
-                rec.tempo_total = 0
+    stage_enter_date = fields.Datetime(string="Entrada no Estágio")
 
     @api.model
     def create(self, vals):
+        # Gera referência automática
         if not vals.get('referencia'):
             vals['referencia'] = self.env['ir.sequence'].next_by_code('crm.referencia') or '/'
+        # Marca o início do stage atual
         vals['stage_enter_date'] = fields.Datetime.now()
         return super().create(vals)
 
+    def write(self, vals):
+        # Se houver mudança de stage, calcula o tempo no stage anterior
+        if 'stage_id' in vals:
+            now = fields.Datetime.now()
+            for rec in self:
+                print(f"\n=== Lead: {rec.name} ===")
+                print(f"Stage atual: {rec.stage_id.name if rec.stage_id else 'N/A'}")
+                print(
+                    f"Stage nova (vals['stage_id']): {self.env['crm.stage'].browse(vals['stage_id']).name if vals.get('stage_id') else 'N/A'}")
+                print(f"Stage enter date: {rec.stage_enter_date}")
+
+                if rec.stage_enter_date:
+                    delta = now - rec.stage_enter_date
+                    total_seconds = delta.total_seconds()
+                    hours = int(total_seconds // 3600)
+                    minutes = int((total_seconds % 3600) // 60)
+                    print(f"Delta entre stages: {delta} ({minutes}h {minutes}min)")
+                    print(f"Delta entre stages: {delta} ({hours} minutos)")
+                    print(f"Tempo total antes: {rec.tempo_total} horas")
+                    rec.tempo_total += hours
+                    print(f"Tempo total depois: {rec.tempo_total} horas")
+
+                # Atualiza o início do novo stage
+                rec.stage_enter_date = now
+                print(f"Stage enter date atualizado para: {rec.stage_enter_date}")
+
+        return super().write(vals)
 
     def action_concluir(self):
         for rec in self:
@@ -58,20 +66,5 @@ class CrmLead(models.Model):
                 raise ValidationError(
                     "Preencha os campos 'Guia de Remessa' e 'Folha de Obra' antes de concluir."
                 )
-        # marcar como ganho (Won)
+        # marca como ganho (Won)
         self.action_set_won()
-
-    def write(self, vals):
-        for rec in self:
-            # se houver mudança de estágio
-            if 'stage_id' in vals and rec.stage_enter_date:
-                now = fields.Datetime.now()
-                delta = now - rec.stage_enter_date
-                hours = delta.total_seconds() / 3600
-                rec.tempo_total += hours  # acumula tempo em horas
-                rec.stage_enter_date = now  # atualiza o início do novo estágio
-
-        return super().write(vals)
-
-
-
