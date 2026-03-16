@@ -16,10 +16,6 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
-<<<<<<< HEAD
-        <!-- Primero remover el botón Lost que viene justo después de Won -->
-        <xpath expr="//header/button[@name='action_set_won_rainbowman']/following-sibling::button[1]" position="replace"/>
-=======
             <xpath expr="//span[@groups='!crm.group_use_recurring_revenues']" position="replace"/>
             <xpath expr="//span[@groups='crm.group_use_recurring_revenues']" position="replace"/>
             <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="replace">
@@ -28,15 +24,8 @@
                         type="object"
                         class="oe_highlight"/>
             </xpath>
->>>>>>> 498095e (ultimos ajuste de calculo de tempo por hora e alteracao da view)
 
-        <!-- Después reemplazar Won por tu botón -->
-        <xpath expr="//header/button[@name='action_set_won_rainbowman']" position="replace">
-            <button name="action_concluir"
-                    string="Concluído"
-                    type="object"
-                    class="oe_highlight"/>
-        </xpath>
+            <xpath expr="//header/button[2]" position="replace" optional="1"/>
             <!-- Pode deixar vazio ou nem colocar se só quiser remover -->
             <xpath expr="//h1[field[@name='name']]" position="replace">
                 <h1>
